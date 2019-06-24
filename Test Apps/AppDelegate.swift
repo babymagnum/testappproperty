@@ -12,11 +12,30 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    var mainNavigationController : UINavigationController?
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        let userDefaults = UserDefaults.standard
+        
+        if userDefaults.bool(forKey: StaticKey.isLogin) {
+            changeRootViewController(rootVC: HomeController())
+        } else {
+            changeRootViewController(rootVC: LoginController())
+        }
+        
         return true
+    }
+    
+    private func changeRootViewController(rootVC : UIViewController){
+        self.mainNavigationController = UINavigationController(rootViewController: rootVC)
+        mainNavigationController?.isNavigationBarHidden = true
+        UIView.transition(with: self.window!, duration: 0.5, options: .transitionCrossDissolve, animations: {
+            self.window?.rootViewController = self.mainNavigationController
+        }, completion: { completed in
+            // maybe do something here
+        })
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -42,5 +61,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+}
+
+extension String{
+    func trim() -> String{
+        return self.trimmingCharacters(in: NSCharacterSet.whitespacesAndNewlines)
+    }
 }
 
